@@ -26,7 +26,18 @@ export default function HomePage(){
     const imageComponent = ({item})=>(<ImageComponent ImageObject={item}/>);
     return(
         <View style={styles.MainContainer}>
-          
+            <MasonryFlashList
+                data={imageData}
+                estimatedItemSize={184}
+                removeClippedSubviews={true}
+                initialNumToRender={20}
+                windowSize={11}
+                maxToRenderPerBatch={8}
+                renderItem={imageComponent} 
+                numColumns={2}
+                keyExtractor={(item)=> item.id}
+              
+            />
         </View>
     )
 }
