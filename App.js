@@ -4,9 +4,9 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { CardStyleInterpolators } from '@react-navigation/stack';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {NavigationContainer} from '@react-navigation/native' 
-import Home from './Screens/HomePage';
-import Favorites from './Screens/FavoritesPage';
-import  Settings from './Screens/SettingsPage';
+import Home from './screens/HomePage';
+import Favorites from './screens/FavoritesPage';
+import  Settings from './screens/SettingsPage';
 
 export default function App() {
   const Tabs = createBottomTabNavigator();
