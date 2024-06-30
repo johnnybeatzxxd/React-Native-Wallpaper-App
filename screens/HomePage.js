@@ -1,11 +1,12 @@
 import { StatusBar } from 'expo-status-bar';
 import { React, useState, useEffect } from 'react';
-import { FlatList, StyleSheet, Text, View } from 'react-native';
+import { FlatList, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { MasonryFlashList } from "@shopify/flash-list";
 import { ImageComponent } from '../components/imageContainer';
 import { queryImage } from '../utils/fetchImage';
-import axios from 'axios';
-import { PIXEL_API_KEY } from '@env';
+import Ionicons from '@expo/vector-icons/Ionicons';
+import { MaterialIcons } from '@expo/vector-icons';
+import { Searchbar } from '../components/searchBar';
 
 
 export default function HomePage(){
@@ -30,19 +31,21 @@ export default function HomePage(){
     
     return(
         <View style={styles.MainContainer}>
-            {imageData.length > 0 ?( <MasonryFlashList
-                data={imageData}
-                estimatedItemSize={184}
-                removeClippedSubviews={true}
-                initialNumToRender={20}
-                windowSize={11}
-                maxToRenderPerBatch={8}
-                renderItem={imageComponent} 
-                numColumns={2}
-                keyExtractor={(item) => item.id}
-                onEndReachedThreshold={0.5}
-                onEndReached={()=>{setPageNumber(pageNumber+1)}}
-            />):(<Text>Loading...</Text>)}
+            <Searchbar/>
+                {imageData.length > 0 ?( <MasonryFlashList
+                    data={imageData}
+                    estimatedItemSize={184}
+                    removeClippedSubviews={true}
+                    initialNumToRender={20}
+                    windowSize={11}
+                    maxToRenderPerBatch={8}
+                    renderItem={imageComponent} 
+                    numColumns={2}
+                    keyExtractor={(item) => item.id}
+                    onEndReachedThreshold={0.5}
+                    onEndReached={()=>{setPageNumber(pageNumber+1)}}
+                    ListHeaderComponent={<View style={styles.tagsContainer}></View>}
+                />):(<Text>Loading...</Text>)}
            
         </View>
     )
@@ -51,6 +54,11 @@ export default function HomePage(){
 const styles = StyleSheet.create({
     MainContainer:{
         flex:1,
+    },
+    
+    tagsContainer:{
+        height:40,
+        
     },
     ImageContainer:{
         
