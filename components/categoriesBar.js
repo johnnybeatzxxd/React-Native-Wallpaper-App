@@ -1,18 +1,22 @@
-import React from 'react';
-import {Text, View, StyleSheet, ScrollView} from 'react-native';
+import {React, useState }from 'react';
+import {Text, View, StyleSheet, ScrollView, TouchableOpacity} from 'react-native';
 import {categoriesData} from '../constants/categories';
 
 
 export const CategoriesBar = ()=>{
     const categories = categoriesData();
-    
+    const [selectedCategory, selectCategory] = useState();
     return(
     <View style={styles.categoriesBarContainer}>
-        <ScrollView horizontal={true}  showsHorizontalScrollIndicator={false}>
-        {categories.map((catagory)=>(
-            <View style={styles.categoryContainer}>
-                <Text style={styles.categoryText}>{catagory}</Text>
-            </View>
+        <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
+        {categories.map((category, idx) => (
+            <TouchableOpacity 
+                style={[styles.categoryContainer, {backgroundColor: selectedCategory === idx ? 'lightgrey' : 'white'}]} 
+                key={idx} 
+                onPress={() => {selectedCategory === idx ? selectCategory(null) : selectCategory(idx)}}
+            >
+                <Text style={styles.categoryText}>{category}</Text>
+            </TouchableOpacity>
         ))}
         </ScrollView>
     </View>)
