@@ -7,7 +7,8 @@ import { queryImage } from '../utils/fetchImage';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { MaterialIcons } from '@expo/vector-icons';
 import { Searchbar } from '../components/searchBar';
-
+import { CategoriesBar } from '../components/categoriesBar';
+import {data} from '../constants/categories'
 
 export default function HomePage(){
     const [imageData, setImageData] = useState([]);
@@ -20,6 +21,7 @@ export default function HomePage(){
         queryImage(query, pageNumber) 
         .then(images => { 
             setImageData([...imageData,...images]);
+            console.log(data);
         })
         .catch(error => {
             console.error('Error fetching images:', error);
@@ -31,7 +33,8 @@ export default function HomePage(){
     
     return(
         <View style={styles.MainContainer}>
-            <Searchbar/>
+            
+           
                 {imageData.length > 0 ?( <MasonryFlashList
                     data={imageData}
                     estimatedItemSize={184}
@@ -42,9 +45,10 @@ export default function HomePage(){
                     renderItem={imageComponent} 
                     numColumns={2}
                     keyExtractor={(item) => item.id}
+                    ListHeaderComponent={<><Searchbar/><CategoriesBar/></>}
                     onEndReachedThreshold={0.5}
                     onEndReached={()=>{setPageNumber(pageNumber+1)}}
-                    ListHeaderComponent={<View style={styles.tagsContainer}></View>}
+                    
                 />):(<Text>Loading...</Text>)}
            
         </View>
