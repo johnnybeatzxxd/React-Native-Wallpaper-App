@@ -9,13 +9,16 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { Searchbar } from '../components/searchBar';
 import { CategoriesBar } from '../components/categoriesBar';
 import {data} from '../constants/categories'
+import Animated, { useSharedValue, withSpring, useAnimatedStyle, Easing, withTiming } from 'react-native-reanimated';
+
 
 export default function HomePage(){
     const [imageData, setImageData] = useState([]);
     const [pageNumber, setPageNumber] = useState(1);
     const [query,setQuery] = useState('movie wallpaper')
-    
-    
+    const errorBoxWidth = useSharedValue(0);
+    const errorBoxHeight = useSharedValue(150);
+    const errorText = useSharedValue(0)
     useEffect(() => {
         console.log(query);
         queryImage(query, pageNumber) 
@@ -24,7 +27,11 @@ export default function HomePage(){
             console.log(data);
         })
         .catch(error => {
-            console.error('Error fetching images:', error);
+            if (error == 'AxiosError: Network Error'){
+               errorBoxWidth.value = withSpring(250)
+              
+               errorText.value = withTiming(1)
+            }
         });
     }, [pageNumber]); 
 
@@ -49,7 +56,10 @@ export default function HomePage(){
                     onEndReachedThreshold={0.5}
                     onEndReached={()=>{setPageNumber(pageNumber+1)}}
                     
-                />):(<Text>Loading...</Text>)}
+                />):(
+                < Animated.View style={[styles.processLogs,{width:errorBoxWidth,height:errorBoxHeight}]}>
+                    <Animated.Text style={{opacity:errorText}}>Your Connection Is POOR!</Animated.Text>
+                </Animated.View>)}
            
         </View>
     )
@@ -58,6 +68,9 @@ export default function HomePage(){
 const styles = StyleSheet.create({
     MainContainer:{
         flex:1,
+        justifyContent:'center',
+        alignItems:"center",
+
     },
     
     tagsContainer:{
@@ -69,5 +82,16 @@ const styles = StyleSheet.create({
         height:100,
         borderWidth:1,
         borderColor:"black"
-    }
+    },
+    processLogs:{
+        
+        justifyContent:"center",
+        alignItems:'center',
+        borderWidth:1,
+        width:250,
+        height:150,
+        borderRadius:20,
+        backgroundColor:"lightgrey"
+        
+    },
 })
