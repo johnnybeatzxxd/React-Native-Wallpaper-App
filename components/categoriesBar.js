@@ -3,9 +3,20 @@ import {Text, View, StyleSheet, ScrollView, TouchableOpacity} from 'react-native
 import {categoriesData} from '../constants/categories';
 
 
-export const CategoriesBar = ()=>{
+export const CategoriesBar = ({setCategory,setImageData})=>{
     const categories = categoriesData();
     const [selectedCategory, selectCategory] = useState();
+
+    const handlePress = (idx)=>{
+        selectedCategory === idx ? selectCategory(null) : selectCategory(idx);
+        console.log(selectedCategory);
+
+        selectedCategory === null ? setCategory(''): setCategory(categories[idx]);
+        setImageData([]);
+        
+    }
+
+
     return(
     <View style={styles.categoriesBarContainer}>
         <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
@@ -13,7 +24,7 @@ export const CategoriesBar = ()=>{
             <TouchableOpacity 
                 style={[styles.categoryContainer, {backgroundColor: selectedCategory === idx ? 'lightgrey' : 'white'}]} 
                 key={idx} 
-                onPress={() => {selectedCategory === idx ? selectCategory(null) : selectCategory(idx)}}
+                onPress={()=>{handlePress(idx)}}
             >
                 <Text style={styles.categoryText}>{category}</Text>
             </TouchableOpacity>
@@ -21,6 +32,9 @@ export const CategoriesBar = ()=>{
         </ScrollView>
     </View>)
 }
+
+
+
 const styles = StyleSheet.create({
     categoriesBarContainer:{
         flexDirection:'row'

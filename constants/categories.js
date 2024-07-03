@@ -1,12 +1,22 @@
 export const categoriesData = ()=>[
-    "Nature",
-    "Urban",
-    "Animals",
-    "Abstract",
-    "Space",
-    "Art",
-    "Food",
-    "Travel",
-    "Quotes",
-    "Pop"
-  ];
+  'backgrounds',
+  'fashion', 
+  'nature', 
+  'science', 
+  'education', 
+  'feelings', 
+  'health', 
+  'people', 
+  'religion', 
+  'places', 
+  'animals', 
+  'industry', 
+  'computer', 
+  'food', 
+  'sports', 
+  'transportation', 
+  'travel', 
+  'buildings', 
+  'business', 
+  'music' 
+];
