@@ -1,22 +1,27 @@
 import { TextInput, View,StyleSheet } from "react-native"
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { MaterialIcons } from '@expo/vector-icons';
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import Animated, { useSharedValue, withSpring, useAnimatedStyle, Easing } from 'react-native-reanimated';
-export const Searchbar = ()=> {
+import { debounce } from "lodash";
+
+
+export const Searchbar = ({setQuery,setImageData})=> {
     const [searchText, setSearchText] = useState('');
-    
+    const searchValue = useRef(null);
+    const handler = useCallback(debounce((text)=>{console.log(text);setImageData([]);setQuery(text);setSearchText(text)}, 1000), []);
+   
     return(
         <View style={styles.searchContainer}>
             <Ionicons name='search' size={20} style={{padding:10}}/>
             <TextInput 
                 style={styles.textInput}
-                value={searchText}
-                onChangeText = {(value)=>setSearchText(value)}
+                ref={searchValue}
+                onChangeText = {handler}
                 />
             {searchText &&
             <View style={[styles.cancelButtonConatiner]}>
-                <MaterialIcons name="clear" size={25} color="black" onPress={()=>{setSearchText('')}}/>
+                <MaterialIcons name="clear" size={25} color="black" onPress={()=>{searchValue?.current?.clear() ;setSearchText('');}}/>
             </View >}
         </View>
         )

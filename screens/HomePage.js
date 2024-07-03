@@ -15,13 +15,14 @@ import Animated, { useSharedValue, withSpring, useAnimatedStyle, Easing, withTim
 export default function HomePage(){
     const [imageData, setImageData] = useState([]);
     const [pageNumber, setPageNumber] = useState(1);
-    const [query,setQuery] = useState('movie wallpaper')
+    const [query,setQuery] = useState('');
+    const [category,setCategory] = useState();
     const errorBoxWidth = useSharedValue(0);
-    const errorBoxHeight = useSharedValue(150);
+    const errorBoxHeight = useSharedValue(0);
     const errorText = useSharedValue(0)
-    useEffect(() => {
+    const setImages = (query,pageNumber)=>{
         console.log(query);
-        queryImage(query, pageNumber) 
+        queryImage(query, pageNumber,category) 
         .then(images => { 
             setImageData([...imageData,...images]);
             console.log(data);
@@ -29,11 +30,21 @@ export default function HomePage(){
         .catch(error => {
             if (error == 'AxiosError: Network Error'){
                errorBoxWidth.value = withSpring(250)
+               errorBoxHeight.value = withSpring(150)
               
                errorText.value = withTiming(1)
             }
         });
-    }, [pageNumber]); 
+    }
+    useEffect(() => {
+       setImages(query,pageNumber,category)
+    }, [pageNumber]);
+    useEffect(()=>{
+       setImages(query,1,category)
+    },[query])
+    useEffect(()=>{
+       setImages(query,1,category)
+    },[category])
 
     
     const imageComponent = ({item})=>(<ImageComponent ImageObject={item}/>);
@@ -42,7 +53,7 @@ export default function HomePage(){
         <View style={styles.MainContainer}>
             
            
-                {imageData.length > 0 ?( <MasonryFlashList
+                <MasonryFlashList
                     data={imageData}
                     estimatedItemSize={184}
                     removeClippedSubviews={true}
@@ -52,14 +63,15 @@ export default function HomePage(){
                     renderItem={imageComponent} 
                     numColumns={2}
                     keyExtractor={(item) => item.id}
-                    ListHeaderComponent={<><Searchbar/><CategoriesBar/></>}
+                    ListHeaderComponent={<><Searchbar setQuery={setQuery} setImageData={setImageData}/><CategoriesBar setCategory={setCategory}/></>}
                     onEndReachedThreshold={0.5}
                     onEndReached={()=>{setPageNumber(pageNumber+1)}}
                     
-                />):(
+                />
+                
                 < Animated.View style={[styles.processLogs,{width:errorBoxWidth,height:errorBoxHeight}]}>
                     <Animated.Text style={{opacity:errorText}}>Your Connection Is POOR!</Animated.Text>
-                </Animated.View>)}
+                </Animated.View>
            
         </View>
     )
