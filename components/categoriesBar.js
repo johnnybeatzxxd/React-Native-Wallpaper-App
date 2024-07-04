@@ -1,28 +1,30 @@
-import {React, useState }from 'react';
+import {React, useState, useRef }from 'react';
 import {Text, View, StyleSheet, ScrollView, TouchableOpacity} from 'react-native';
 import {categoriesData} from '../constants/categories';
 
 
 export const CategoriesBar = ({setCategory,setImageData})=>{
     const categories = categoriesData();
-    const [selectedCategory, selectCategory] = useState();
+    const selectedCategory = useRef(null);
 
     const handlePress = (idx)=>{
-        selectedCategory === idx ? selectCategory(null) : selectCategory(idx);
-        console.log(selectedCategory);
-
-        selectedCategory === null ? setCategory(''): setCategory(categories[idx]);
-        setImageData([]);
+        selectedCategory.current === idx ? selectedCategory.current = null : selectedCategory.current= idx;
+        
+        if(selectedCategory.current === null){
+            setCategory('');
+        } else {
+            setCategory(categories[idx]);
+        }
+       
         
     }
-
 
     return(
     <View style={styles.categoriesBarContainer}>
         <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
         {categories.map((category, idx) => (
             <TouchableOpacity 
-                style={[styles.categoryContainer, {backgroundColor: selectedCategory === idx ? 'lightgrey' : 'white'}]} 
+                style={[styles.categoryContainer, {backgroundColor: selectedCategory.current === idx ? 'lightgrey' : 'white'}]} 
                 key={idx} 
                 onPress={()=>{handlePress(idx)}}
             >

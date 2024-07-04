@@ -9,19 +9,26 @@ import { debounce } from "lodash";
 export const Searchbar = ({setQuery,setImageData})=> {
     const [searchText, setSearchText] = useState('');
     const searchValue = useRef(null);
-    const handler = useCallback(debounce((text)=>{console.log(text);setImageData([]);setQuery(text);setSearchText(text)}, 1000), []);
+    const handler = useCallback(debounce((text)=>{
+        if(text.length > 2){
+        
+        setQuery(text);
+        setSearchText(text);
+        }
+    }, 1000), []);
    
     return(
         <View style={styles.searchContainer}>
             <Ionicons name='search' size={20} style={{padding:10}}/>
             <TextInput 
                 style={styles.textInput}
+                placeholder="Search"
                 ref={searchValue}
                 onChangeText = {handler}
                 />
             {searchText &&
             <View style={[styles.cancelButtonConatiner]}>
-                <MaterialIcons name="clear" size={25} color="black" onPress={()=>{searchValue?.current?.clear() ;setSearchText('');}}/>
+                <MaterialIcons name="clear" size={25} color="black" onPress={()=>{searchValue?.current?.clear();setSearchText('');setQuery('')}}/>
             </View >}
         </View>
         )

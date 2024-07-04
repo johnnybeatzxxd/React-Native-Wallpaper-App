@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import { React, useState, useEffect } from 'react';
+import { React, useState, useEffect, useRef } from 'react';
 import { FlatList, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { MasonryFlashList } from "@shopify/flash-list";
 import { ImageComponent } from '../components/imageContainer';
@@ -15,17 +15,17 @@ import Animated, { useSharedValue, withSpring, useAnimatedStyle, Easing, withTim
 export default function HomePage(){
     const [imageData, setImageData] = useState([]);
     const [pageNumber, setPageNumber] = useState(1);
-    const [query,setQuery] = useState('');
-    const [category,setCategory] = useState();
+    const [query, setQuery] = useState('');
+    const [category, setCategory] = useState('');
     const errorBoxWidth = useSharedValue(0);
     const errorBoxHeight = useSharedValue(0);
-    const errorText = useSharedValue(0)
-    const setImages = (query,pageNumber)=>{
-        console.log(query);
-        queryImage(query, pageNumber,category) 
+    const errorText = useSharedValue(0);
+
+    const setImages = (query, pageNumber) => {
+        queryImage(query, pageNumber, category)
         .then(images => { 
-            setImageData([...imageData,...images]);
-            console.log(data);
+            setImageData(prevData => [...prevData, ...images]);
+            console.log(imageData);
         })
         .catch(error => {
             if (error == 'AxiosError: Network Error'){
@@ -37,13 +37,16 @@ export default function HomePage(){
         });
     }
     useEffect(() => {
-       setImages(query,pageNumber,category)
+       setImages(query, pageNumber, category)
     }, [pageNumber]);
     useEffect(()=>{
-       setImages(query,1,category)
+        setImageData([]);
+        setImages(query,1,category)  
     },[query])
     useEffect(()=>{
-       setImages(query,1,category)
+        setImageData([]);
+        setImages(query,1,category)
+
     },[category])
 
     
@@ -52,7 +55,6 @@ export default function HomePage(){
     return(
         <View style={styles.MainContainer}>
             
-           
                 <MasonryFlashList
                     data={imageData}
                     estimatedItemSize={184}
@@ -62,8 +64,8 @@ export default function HomePage(){
                     maxToRenderPerBatch={8}
                     renderItem={imageComponent} 
                     numColumns={2}
-                    keyExtractor={(item) => item.id}
-                    ListHeaderComponent={<><Searchbar setQuery={setQuery} setImageData={setImageData}/><CategoriesBar setCategory={setCategory}/></>}
+                    keyExtractor={(item, index) => `${item.id}-${index}`}
+                    ListHeaderComponent={<><Searchbar setQuery={setQuery}/><CategoriesBar setCategory={setCategory}/></>}
                     onEndReachedThreshold={0.5}
                     onEndReached={()=>{setPageNumber(pageNumber+1)}}
                     
