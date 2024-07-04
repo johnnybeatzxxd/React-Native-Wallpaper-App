@@ -1,9 +1,10 @@
 import { StatusBar } from 'expo-status-bar';
 import { React, useState, useEffect, useRef } from 'react';
-import { FlatList, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { FlatList, Image, Modal, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { MasonryFlashList } from "@shopify/flash-list";
 import { ImageComponent } from '../components/imageContainer';
 import { queryImage } from '../utils/fetchImage';
+import { PreviewModal } from '../components/imagePreviewModal'
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { MaterialIcons } from '@expo/vector-icons';
 import { Searchbar } from '../components/searchBar';
@@ -17,10 +18,8 @@ export default function HomePage(){
     const [pageNumber, setPageNumber] = useState(1);
     const [query, setQuery] = useState('');
     const [category, setCategory] = useState('');
-    const errorBoxWidth = useSharedValue(0);
-    const errorBoxHeight = useSharedValue(0);
-    const errorText = useSharedValue(0);
-
+    const [modalVisible, setModalVisible] = useState(false);
+    const [currentImage, setCurrentImage] = useState({});
     const setImages = (query, pageNumber) => {
         queryImage(query, pageNumber, category)
         .then(images => { 
@@ -29,10 +28,7 @@ export default function HomePage(){
         })
         .catch(error => {
             if (error == 'AxiosError: Network Error'){
-               errorBoxWidth.value = withSpring(250)
-               errorBoxHeight.value = withSpring(150)
-              
-               errorText.value = withTiming(1)
+              console.log("poor network");
             }
         });
     }
@@ -50,30 +46,29 @@ export default function HomePage(){
     },[category])
 
     
-    const imageComponent = ({item})=>(<ImageComponent ImageObject={item}/>);
+    const imageComponent = ({item})=>(<ImageComponent ImageObject={item} setModalVisible={setModalVisible} setCurrentImage={setCurrentImage} />);
     
     return(
         <View style={styles.MainContainer}>
             
-                <MasonryFlashList
-                    data={imageData}
-                    estimatedItemSize={184}
-                    removeClippedSubviews={true}
-                    initialNumToRender={20}
-                    windowSize={11}
-                    maxToRenderPerBatch={8}
-                    renderItem={imageComponent} 
-                    numColumns={2}
-                    keyExtractor={(item, index) => `${item.id}-${index}`}
-                    ListHeaderComponent={<><Searchbar setQuery={setQuery}/><CategoriesBar setCategory={setCategory}/></>}
-                    onEndReachedThreshold={0.5}
-                    onEndReached={()=>{setPageNumber(pageNumber+1)}}
-                    
-                />
+            <MasonryFlashList
+                data={imageData}
+                estimatedItemSize={184}
+                removeClippedSubviews={true}
+                initialNumToRender={20}
+                windowSize={11}
+                maxToRenderPerBatch={8}
+                renderItem={imageComponent} 
+                numColumns={2}
+                keyExtractor={(item, index) => `${item.id}-${index}`}
+                ListHeaderComponent={<><Searchbar setQuery={setQuery}/><CategoriesBar setCategory={setCategory}/></>}
+                onEndReachedThreshold={0.5}
+                onEndReached={()=>{setPageNumber(pageNumber+1)}}
                 
-                < Animated.View style={[styles.processLogs,{width:errorBoxWidth,height:errorBoxHeight}]}>
-                    <Animated.Text style={{opacity:errorText}}>Your Connection Is POOR!</Animated.Text>
-                </Animated.View>
+            />
+            
+            <PreviewModal currentImage={currentImage} modalVisible={modalVisible} setModalVisible={setModalVisible}/> 
+            
            
         </View>
     )
@@ -97,15 +92,5 @@ const styles = StyleSheet.create({
         borderWidth:1,
         borderColor:"black"
     },
-    processLogs:{
-        
-        justifyContent:"center",
-        alignItems:'center',
-        borderWidth:1,
-        width:250,
-        height:150,
-        borderRadius:20,
-        backgroundColor:"lightgrey"
-        
-    },
+    
 })

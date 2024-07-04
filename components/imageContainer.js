@@ -2,13 +2,13 @@ import React from "react";
 import { StyleSheet, Image, View, Text, TouchableOpacity } from "react-native";
 import { resizeImage } from "../utils/imageResizer";
 
-export function ImageComponent({ImageObject}) {
+export function ImageComponent({ImageObject,setModalVisible,setCurrentImage}) {
     const imageSize = resizeImage(ImageObject.imageWidth, ImageObject.imageHeight, 200, 300);
     const imageURL = ImageObject.largeImageURL; 
     
     return (
         <View style={[styles.ImageContainer, {width: '95%', height: imageSize.height}]}>
-            <TouchableOpacity onPress={()=>{console.log("pressed!!");}}>
+            <TouchableOpacity onPress={()=>{setCurrentImage(ImageObject);setModalVisible(true)}}>
                 <Image 
                     style={[styles.image, {width: imageSize.width, height: imageSize.height}]} 
                     source={{uri: imageURL}} 
